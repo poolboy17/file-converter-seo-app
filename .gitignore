@@ -30,6 +30,8 @@ Thumbs.db
 *.log
 *.tmp
 push_to_github.py
+config.yaml
+replit.md
 
 # Git
 .git/
