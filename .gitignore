@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Replit
+.pythonlibs/
+.local/
+.cache/
+.config/
+.upm/
+.replit
+replit.nix
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+*.log
+*.tmp
+push_to_github.py
+
+# Git
+.git/
