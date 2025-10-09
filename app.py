@@ -13,7 +13,7 @@ from utils.image_handler import ImageHandler
 
 # Constants
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB limit
-SUPPORTED_EXTENSIONS = ["docx", "csv", "txt", "wxr"]
+SUPPORTED_EXTENSIONS = ["docx", "csv", "txt", "wxr", "xml"]
 
 
 # Initialize converters with caching
@@ -182,15 +182,15 @@ def main():
     st.markdown("---")
     st.header("📤 Upload Files")
     st.info(
-        "**Supported formats**: DOCX, CSV, TXT, WXR | "
+        "**Supported formats**: DOCX, CSV, TXT, WXR/XML (WordPress exports) | "
         "**Max file size**: 50MB per file"
     )
 
     uploaded_files = st.file_uploader(
         "Choose files to convert",
-        type=["docx", "csv", "txt", "wxr"],
+        type=["docx", "csv", "txt", "wxr", "xml"],
         accept_multiple_files=True,
-        help="Supported formats: DOCX, CSV, TXT, WXR",
+        help="Supported formats: DOCX, CSV, TXT, WXR, XML (WordPress exports)",
         label_visibility="visible",
     )
 
@@ -237,7 +237,9 @@ def main():
                     st.write(f"{file.size / 1024:.1f} KB")
                 with col3:
                     file_ext = get_file_extension(file.name)
-                    st.write(f".{file_ext}")
+                    # Display XML as WXR for clarity
+                    display_ext = "wxr (WordPress)" if file_ext == "xml" else file_ext
+                    st.write(f".{display_ext}")
                 with col4:
                     # Preview button
                     if st.button("👁️", key=f"preview_{idx}", help="Preview file"):
@@ -280,6 +282,10 @@ def main():
 
                 try:
                     file_ext = get_file_extension(file.name)
+
+                    # Treat XML files as WXR (WordPress exports)
+                    if file_ext == "xml":
+                        file_ext = "wxr"
 
                     if file_ext in converters:
                         # Convert to markdown with image extraction/downloading
@@ -396,6 +402,11 @@ def main():
 
             with tab3:
                 st.subheader("Download Converted Files")
+                st.info(
+                    "💡 **Where are files saved?** Click the download buttons "
+                    "below to save files to your browser's download folder "
+                    "(usually `Downloads/` or `My Documents/Downloads/`)"
+                )
 
                 col1, col2 = st.columns(2)
 
@@ -497,8 +508,8 @@ def main():
 
         with col4:
             st.markdown(
-                "**WXR**\n"
-                "- WordPress export\n"
+                "**WXR/XML**\n"
+                "- WordPress exports (.xml)\n"
                 "- Extracts posts/pages\n"
                 "- Preserves metadata"
             )
