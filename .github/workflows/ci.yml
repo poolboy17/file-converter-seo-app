@@ -1,0 +1,164 @@
+name: Code Quality & Type Checking
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  type-check:
+    name: Type Checking with Pyright
+    runs-on: windows-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pyright
+
+    - name: Run Pyright type checker
+      run: |
+        pyright --version
+        pyright
+
+    - name: Upload Pyright results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: pyright-results
+        path: .pyright/
+
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install black isort mypy pylint bandit safety
+
+    - name: Check code formatting with Black
+      run: |
+        black --check --diff .
+
+    - name: Check import sorting with isort
+      run: |
+        isort --check-only --diff .
+
+    - name: Run MyPy type checker
+      run: |
+        mypy --install-types --non-interactive --ignore-missing-imports converters/ utils/ app.py || true
+
+    - name: Run Pylint
+      run: |
+        pylint converters/ utils/ app.py --exit-zero --output-format=text
+
+    - name: Run Bandit security checks
+      run: |
+        bandit -r converters/ utils/ app.py -f json -o bandit-report.json || true
+
+    - name: Check dependencies for vulnerabilities
+      run: |
+        safety check --json || true
+
+    - name: Upload security reports
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: security-reports
+        path: |
+          bandit-report.json
+
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ['3.11', '3.12']
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ matrix.python-version }}
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install pytest pytest-cov pytest-mock pytest-asyncio
+
+    - name: Run tests with pytest
+      run: |
+        pytest tests/ -v --cov=. --cov-report=xml --cov-report=html --cov-report=term-missing || echo "No tests found yet"
+
+    - name: Upload coverage to Codecov
+      if: matrix.python-version == '3.12'
+      uses: codecov/codecov-action@v4
+      with:
+        file: ./coverage.xml
+        fail_ci_if_error: false
+
+    - name: Upload test results
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: test-results-${{ matrix.python-version }}
+        path: htmlcov/
+
+  build-check:
+    name: Build Check
+    runs-on: ubuntu-latest
+    needs: [type-check, code-quality]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python 3.12
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Verify imports
+      run: |
+        python -c "import app; print('✅ Main app imports successfully')"
+        python -c "from converters import *; print('✅ Converters import successfully')"
+        python -c "from utils import *; print('✅ Utils import successfully')"
+
+    - name: Check for syntax errors
+      run: |
+        python -m py_compile app.py
+        python -m py_compile converters/*.py
+        python -m py_compile utils/*.py

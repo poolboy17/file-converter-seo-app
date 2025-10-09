@@ -2,11 +2,13 @@
 """
 Push the entire project to a new GitHub repository
 """
-import os
-import json
-import requests
 import base64
+import json
+import os
 from pathlib import Path
+
+import requests
+
 
 def get_github_token():
     """Get GitHub access token from Replit connection"""

@@ -1,74 +1,60 @@
-# File Converter with SEO Optimization
+# File to Markdown Converter
 
-A powerful Python web application for converting multiple document formats (DOCX, CSV, TXT, WordPress WXR) into clean Markdown and SEO-optimized HTML. Built with Streamlit for an intuitive user experience.
+A powerful Python web application for converting multiple document formats (DOCX, CSV, TXT, WordPress WXR) into clean Markdown. Built with Streamlit for an intuitive user experience.
 
 ## Features
 
 ### Core Conversion
+
 - **Multi-Format Support**: Convert DOCX, CSV, TXT, and WordPress WXR files
 - **Batch Processing**: Handle multiple files simultaneously
 - **Format Preservation**: Maintains document structure and formatting
-- **Universal Output**: Generate Markdown, HTML, or both
+- **Clean Markdown Output**: Professional, well-formatted Markdown files
 
 ### Image Management
+
 - **Automatic Extraction**: Pulls embedded images from DOCX files
 - **Remote Downloads**: Fetches images from WordPress exports
 - **Smart Optimization**: Resizes (max 1200px) and compresses (85% quality)
 - **Deduplication**: Content-based hashing prevents duplicate storage
 
-### HTML Generation
-- **4 Template Styles**: Modern, Minimal, Classic, Dark
-- **5 Color Schemes**: Blue, Green, Purple, Red, Orange
-- **Font Customization**: Sans-serif, Serif, Monospace options
-- **Pure CSS**: No external dependencies
+### Static Site Generator Support
 
-### SEO Optimization
-- **8-Point Validation**: Comprehensive SEO analysis with scoring (0-100)
-- **Automatic Enhancement**: Injects meta tags, Open Graph, Schema.org structured data
-- **Detailed Reporting**: Grade-based feedback with actionable recommendations
-- **Toggle Control**: Enable/disable SEO features as needed
-
-**SEO Checks:**
-- Title tags (30-60 characters)
-- Meta descriptions (120-160 characters)
-- Heading hierarchy (H1-H6)
-- Image alt text coverage
-- Internal/external links
-- Content length (300+ words)
-- Open Graph tags
-- Structured data (JSON-LD)
-
-### Static Site Generation
-- **SSG Support**: Generate frontmatter for Jekyll, Hugo, Astro
-- **Complete Sites**: Create navigable static websites with index pages
-- **Clean Structure**: Organized folders (pages/, assets/)
-- **ZIP Downloads**: Package everything for easy deployment
+- **SSG Frontmatter**: Generate frontmatter for Jekyll, Hugo, Astro
+- **Quick Presets**: One-click configuration for popular SSGs
+- **Metadata Extraction**: Automatically extract and format document metadata
+- **ZIP Downloads**: Package all files and images for easy deployment
 
 ## Installation
 
 ### Requirements
+
 - Python 3.11 or higher
 - pip or uv package manager
 
 ### Setup
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/poolboy17/file-converter-seo-app.git
 cd file-converter-seo-app
 ```
 
 2. Install dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
 
 Or using uv:
+
 ```bash
 uv sync
 ```
 
 3. Run the application:
+
 ```bash
 streamlit run app.py --server.port 5000
 ```
@@ -80,46 +66,26 @@ streamlit run app.py --server.port 5000
 ### Basic Conversion
 
 1. **Upload Files**: Click "Browse files" and select one or more documents
-2. **Choose Output Format**: Select Markdown, HTML, or Both
-3. **Configure Options** (optional):
-   - Select HTML template and color scheme
-   - Choose font family
-   - Enable/disable SEO enhancements
-   - Add frontmatter for static site generators
-4. **Convert**: Click "Convert All Files"
-5. **Download**: Get individual files or create a ZIP archive
+1. **Configure Options** (optional):
+   - Include metadata in output
+   - Add frontmatter for static site generators (Jekyll, Hugo, Astro)
+   - Select quick presets for common use cases
+1. **Convert**: Click "Convert All Files"
+1. **Download**: Get individual Markdown files or create a ZIP archive
 
-### SEO Optimization
+### Static Site Generator Frontmatter
 
-Enable SEO enhancements in the sidebar to automatically add:
-- Essential meta tags (description, keywords, viewport, robots)
-- Open Graph tags for social media sharing
-- Twitter Card metadata
-- Schema.org structured data (Article format)
-- Semantic HTML5 elements
-- Image lazy loading attributes
-- Link security attributes
+Add YAML frontmatter to your Markdown files for popular static site generators:
 
-View detailed SEO reports in the "SEO Report" tab with:
-- Overall score (0-100) and letter grade (A-F)
-- Critical issues requiring attention
-- Warnings for improvements
-- Successful elements
-- Actionable recommendations
+- **Jekyll**: Includes layout, title, date, categories, and tags
+- **Hugo**: Includes title, date, draft status, and taxonomies
+- **Astro**: Includes title, description, pubDate, and layout
 
-### Static Site Generation
-
-1. Select HTML or Both output format
-2. Convert your files
-3. Navigate to the "Download" tab
-4. Enter a site name
-5. Click "Generate Static Site"
-6. Download the complete website as a ZIP file
-
-The generated site includes:
-- `index.html` - Navigation page listing all documents
-- `pages/` - Individual HTML pages for each converted file
-- `assets/` - Images, CSS, and other resources
+Quick preset options:
+- Jekyll Blog
+- Hugo Docs
+- Astro Site
+- Plain Markdown (no frontmatter)
 
 ## Project Structure
 
@@ -152,7 +118,7 @@ file-converter-seo-app/
 ## Technology Stack
 
 - **Framework**: [Streamlit](https://streamlit.io/) - Web application framework
-- **Document Parsing**: 
+- **Document Parsing**:
   - [python-docx](https://python-docx.readthedocs.io/) - DOCX files
   - [pandas](https://pandas.pydata.org/) - CSV files
   - [BeautifulSoup4](https://www.crummy.com/software/BeautifulSoup/) - HTML/XML parsing
@@ -164,7 +130,9 @@ file-converter-seo-app/
 ## Configuration
 
 ### Streamlit Settings
+
 Edit `.streamlit/config.toml` to customize:
+
 ```toml
 [server]
 headless = true
@@ -176,7 +144,9 @@ port = 5000
 ```
 
 ### SEO Configuration
+
 SEO validation rules are configured in `utils/seo_validator.py`:
+
 - Title length: 30-60 characters (optimal)
 - Meta description: 120-160 characters (optimal)
 - Minimum content length: 300 words
@@ -185,14 +155,35 @@ SEO validation rules are configured in `utils/seo_validator.py`:
 ## Development
 
 ### Running Tests
+
 ```bash
 # Run with test files in the uploads folder
 streamlit run app.py --server.port 5000
 ```
 
+### VS Code (local development)
+
+If you're migrating from Replit to VS Code, the repo includes a small helper to create a virtual environment and install dependencies.
+
+1. Run the setup task (or run the PowerShell script):
+
+```powershell
+.\scripts\setup.ps1
+```
+
+2. Activate the virtual environment and run the app:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+streamlit run app.py --server.port 5000
+```
+
+3. You can also use the included VS Code tasks: open the Command Palette -> Tasks: Run Task -> choose "Python: Create venv and install deps" or "Streamlit: Run app".
+
 ### Adding New Converters
 
 1. Create a new converter in `converters/`:
+
 ```python
 class NewFormatConverter:
     def __init__(self, file):
@@ -204,6 +195,7 @@ class NewFormatConverter:
 ```
 
 2. Register in `app.py`:
+
 ```python
 CONVERTERS = {
     '.newformat': NewFormatConverter,
@@ -214,6 +206,7 @@ CONVERTERS = {
 ### Extending SEO Rules
 
 Add new validation rules in `utils/seo_validator.py`:
+
 ```python
 def validate_new_rule(self, soup):
     # Validation logic
@@ -226,12 +219,15 @@ def validate_new_rule(self, soup):
 ## Deployment
 
 ### Replit
+
 This application is optimized for Replit deployment:
+
 1. Fork or import the repository
 2. Configure environment variables if needed
 3. Click "Run" or "Deploy"
 
 ### Docker
+
 ```dockerfile
 FROM python:3.11-slim
 
@@ -246,6 +242,7 @@ CMD ["streamlit", "run", "app.py", "--server.port=5000", "--server.address=0.0.0
 ```
 
 ### Heroku
+
 ```bash
 # Create Procfile
 echo "web: streamlit run app.py --server.port=\$PORT" > Procfile
@@ -287,6 +284,7 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for gui
 ## Support
 
 For issues, questions, or suggestions:
+
 - Open an issue on GitHub
 - Check existing documentation
 - Review the project structure

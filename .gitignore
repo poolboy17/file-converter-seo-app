@@ -5,9 +5,18 @@ __pycache__/
 *.so
 .Python
 env/
-venv/
+.mypy_cache/
+.pytype/
+.pyre/
+.dmypy.json
+dmypy.json
 ENV/
 .venv
+*.egg-info/
+
+# Pylance/Pyright
+.pyright/
+pyrightcache/
 
 # Replit
 .pythonlibs/

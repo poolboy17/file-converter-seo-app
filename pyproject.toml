@@ -13,3 +13,135 @@ dependencies = [
     "requests>=2.32.5",
     "streamlit>=1.50.0",
 ]
+
+[tool.black]
+line-length = 88
+target-version = ['py312']
+include = '\.pyi?$'
+extend-exclude = '''
+/(
+  # directories
+  \.eggs
+  | \.git
+  | \.hg
+  | \.mypy_cache
+  | \.tox
+  | \.venv
+  | build
+  | dist
+)/
+'''
+
+[tool.isort]
+profile = "black"
+line_length = 88
+skip_gitignore = true
+known_first_party = ["converters", "utils"]
+sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
+
+[tool.pyright]
+# Pylance uses Pyright under the hood
+pythonVersion = "3.12"
+pythonPlatform = "Windows"
+typeCheckingMode = "basic"
+useLibraryCodeForTypes = true
+reportMissingImports = true
+reportMissingTypeStubs = false
+reportUnusedImport = true
+reportUnusedVariable = true
+reportUnusedFunction = true
+reportGeneralTypeIssues = true
+reportOptionalMemberAccess = false
+reportOptionalSubscript = false
+reportPrivateImportUsage = false
+
+# Include/exclude patterns
+include = ["converters", "utils", "app.py"]
+exclude = [
+  "**/__pycache__",
+  "**/.venv",
+  "**/.mypy_cache",
+  "**/.pytest_cache",
+  "**/build",
+  "**/dist",
+  "push_to_github.py"
+]
+
+# Stub paths for better type checking
+stubPath = "typings"
+venvPath = "."
+venv = ".venv"
+
+[tool.ruff]
+# Ruff configuration for linting
+line-length = 88
+target-version = "py312"
+
+# Exclude directories
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "push_to_github.py",
+]
+
+# Enable specific rule sets
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "SIM", # flake8-simplify
+]
+
+ignore = [
+    "E501",  # line too long (handled by black)
+    "B008",  # do not perform function calls in argument defaults
+    "C901",  # too complex (for now - cognitive complexity)
+    "B904",  # raise ... from err (Streamlit doesn't need this)
+    "UP032", # Use f-string instead of format call (keep for readability)
+    "SIM102", # Use a single if statement instead of nested if statements
+    "SIM108", # Use ternary operator instead of if-else-block
+]
+
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Allow autofix for all enabled rules
+fixable = ["ALL"]
+unfixable = []
+
+[tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401"]  # Allow unused imports in __init__.py
+"app.py" = ["F401"]       # Allow unused imports in main app (Streamlit dynamic loading)
+"utils/html_generator.py" = ["E501"]  # HTML/CSS/JS template strings have long lines
+
+[tool.ruff.format]
+# Use Black-compatible formatting
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "lf"

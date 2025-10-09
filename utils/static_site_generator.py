@@ -1,82 +1,97 @@
-import os
-from datetime import datetime
-from typing import List, Dict, Any
-import zipfile
 import io
+import os
+import zipfile
+from datetime import datetime
+from typing import Any, Dict, List
+
 
 class StaticSiteGenerator:
     """Generate a complete static site from converted files."""
-    
-    def __init__(self, template: str = 'modern', color_scheme: str = 'blue', font_family: str = None):
+
+    def __init__(
+        self,
+        template: str = "modern",
+        color_scheme: str = "blue",
+        font_family: str = None,
+    ):
         self.site_name = "Converted Site"
         self.template = template
         self.color_scheme = color_scheme
         self.font_family = font_family
-        
-    def generate_site(self, converted_files: List[Dict[str, Any]], site_name: str = None, image_handler=None) -> io.BytesIO:
+
+    def generate_site(
+        self,
+        converted_files: List[Dict[str, Any]],
+        site_name: str = None,
+        image_handler=None,
+    ) -> io.BytesIO:
         """
         Generate a complete static site with navigation.
-        
+
         Args:
             converted_files: List of converted file data with HTML content
             site_name: Name of the site
             image_handler: Optional ImageHandler with extracted images
-            
+
         Returns:
             io.BytesIO: ZIP buffer containing the complete site
         """
         if site_name:
             self.site_name = site_name
-        
+
         zip_buffer = io.BytesIO()
-        
-        with zipfile.ZipFile(zip_buffer, 'w', zipfile.ZIP_DEFLATED) as zip_file:
+
+        with zipfile.ZipFile(zip_buffer, "w", zipfile.ZIP_DEFLATED) as zip_file:
             # Generate index page
             index_html = self._generate_index_page(converted_files)
-            zip_file.writestr('index.html', index_html)
-            
+            zip_file.writestr("index.html", index_html)
+
             # Generate individual pages with navigation
             for file_data in converted_files:
-                if file_data.get('html_content'):
+                if file_data.get("html_content"):
                     # Create sanitized filename
-                    page_name = self._sanitize_filename(file_data['original_name'])
+                    page_name = self._sanitize_filename(file_data["original_name"])
                     page_html = self._generate_page_with_nav(file_data, converted_files)
-                    zip_file.writestr(f'pages/{page_name}.html', page_html)
-            
+                    zip_file.writestr(f"pages/{page_name}.html", page_html)
+
             # Generate CSS file
             css_content = self._generate_site_css()
-            zip_file.writestr('assets/style.css', css_content)
-            
+            zip_file.writestr("assets/style.css", css_content)
+
             # Generate navigation JS
             js_content = self._generate_site_js()
-            zip_file.writestr('assets/script.js', js_content)
-            
+            zip_file.writestr("assets/script.js", js_content)
+
             # Add images if available
-            if image_handler and hasattr(image_handler, 'images'):
+            if image_handler and hasattr(image_handler, "images"):
                 images = image_handler.get_all_images()
                 if images:
                     for image_hash, filename in images.items():
                         # Get the image data
-                        if hasattr(image_handler, 'image_data') and image_hash in image_handler.image_data:
+                        if (
+                            hasattr(image_handler, "image_data")
+                            and image_hash in image_handler.image_data
+                        ):
                             image_data = image_handler.image_data[image_hash]
                             zip_file.writestr(f"assets/{filename}", image_data)
-            
+
             # Generate README
             readme = self._generate_readme(converted_files)
-            zip_file.writestr('README.md', readme)
-        
+            zip_file.writestr("README.md", readme)
+
         zip_buffer.seek(0)
         return zip_buffer
-    
+
     def _generate_index_page(self, converted_files: List[Dict[str, Any]]) -> str:
         """Generate the index/home page with links to all documents."""
         file_list_html = []
-        
+
         for file_data in converted_files:
-            page_name = self._sanitize_filename(file_data['original_name'])
-            file_type = file_data.get('file_type', 'unknown').upper()
-            
-            file_list_html.append(f'''
+            page_name = self._sanitize_filename(file_data["original_name"])
+            file_type = file_data.get("file_type", "unknown").upper()
+
+            file_list_html.append(
+                f"""
             <div class="file-card">
                 <div class="file-icon">{self._get_file_icon(file_data.get('file_type'))}</div>
                 <div class="file-info">
@@ -84,9 +99,10 @@ class StaticSiteGenerator:
                     <p class="file-meta">Type: {file_type}</p>
                 </div>
             </div>
-            ''')
-        
-        html = f'''<!DOCTYPE html>
+            """
+            )
+
+        html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -125,31 +141,35 @@ class StaticSiteGenerator:
     
     <script src="assets/script.js"></script>
 </body>
-</html>'''
-        
+</html>"""
+
         return html
-    
-    def _generate_page_with_nav(self, current_file: Dict[str, Any], all_files: List[Dict[str, Any]]) -> str:
+
+    def _generate_page_with_nav(
+        self, current_file: Dict[str, Any], all_files: List[Dict[str, Any]]
+    ) -> str:
         """Generate a page with navigation to other documents."""
         # The HTML content is already styled with the user's template
         # We'll inject a navigation sidebar into it
-        content = current_file.get('html_content', '')
-        
+        content = current_file.get("html_content", "")
+
         # Fix image paths - pages are in pages/ subdirectory, so need ../ prefix
         content = content.replace('src="assets/', 'src="../assets/')
-        content = content.replace('](assets/', '](../assets/')
-        
+        content = content.replace("](assets/", "](../assets/")
+
         # Build navigation HTML
         nav_items = []
-        current_page_name = self._sanitize_filename(current_file['original_name'])
-        
+        current_page_name = self._sanitize_filename(current_file["original_name"])
+
         for file_data in all_files:
-            page_name = self._sanitize_filename(file_data['original_name'])
+            page_name = self._sanitize_filename(file_data["original_name"])
             is_current = page_name == current_page_name
-            active_class = ' class="active"' if is_current else ''
-            nav_items.append(f'<li{active_class}><a href="{page_name}.html">{file_data["original_name"]}</a></li>')
-        
-        nav_html = f'''
+            active_class = ' class="active"' if is_current else ""
+            nav_items.append(
+                f'<li{active_class}><a href="{page_name}.html">{file_data["original_name"]}</a></li>'
+            )
+
+        nav_html = f"""
         <div class="site-nav-sidebar">
             <div class="nav-header">
                 <a href="../index.html" class="home-link">← Home</a>
@@ -172,17 +192,17 @@ class StaticSiteGenerator:
             .doc-nav li.active a {{ font-weight: bold; }}
             @media (max-width: 768px) {{ body {{ flex-direction: column; }} .site-nav-sidebar {{ width: 100%; position: static; }} }}
         </style>
-        '''
-        
+        """
+
         # Inject navigation after opening body tag
-        if '<body>' in content:
-            content = content.replace('<body>', f'<body>{nav_html}', 1)
-        
+        if "<body>" in content:
+            content = content.replace("<body>", f"<body>{nav_html}", 1)
+
         return content
-    
+
     def _generate_site_css(self) -> str:
         """Generate CSS for the static site."""
-        return '''/* Reset and Base Styles */
+        return """/* Reset and Base Styles */
 * {
     margin: 0;
     padding: 0;
@@ -514,11 +534,11 @@ article blockquote {
         box-shadow: none;
         padding: 0;
     }
-}'''
-    
+}"""
+
     def _generate_site_js(self) -> str:
         """Generate JavaScript for the static site."""
-        return '''// Smooth scrolling for anchor links
+        return """// Smooth scrolling for anchor links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         e.preventDefault();
@@ -566,13 +586,13 @@ document.querySelectorAll('pre code').forEach(block => {
 // Initialize
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Static site loaded successfully');
-});'''
-    
+});"""
+
     def _generate_readme(self, converted_files: List[Dict[str, Any]]) -> str:
         """Generate README for the static site."""
-        file_list = '\n'.join([f"- {f['original_name']}" for f in converted_files])
-        
-        return f'''# {self.site_name}
+        file_list = "\n".join([f"- {f['original_name']}" for f in converted_files])
+
+        return f"""# {self.site_name}
 
 This is a static website generated from converted documents.
 
@@ -618,25 +638,20 @@ Then open http://localhost:8000 in your browser.
 
 Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
 Created with File to Markdown Converter
-'''
-    
+"""
+
     def _sanitize_filename(self, filename: str) -> str:
         """Sanitize filename for use in URLs."""
         import re
+
         # Remove extension
         name = os.path.splitext(filename)[0]
         # Convert to lowercase and replace spaces/special chars with hyphens
-        name = re.sub(r'[^\w\s-]', '', name.lower())
-        name = re.sub(r'[-\s]+', '-', name)
-        return name.strip('-')
-    
+        name = re.sub(r"[^\w\s-]", "", name.lower())
+        name = re.sub(r"[-\s]+", "-", name)
+        return name.strip("-")
+
     def _get_file_icon(self, file_type: str) -> str:
         """Get emoji icon for file type."""
-        icons = {
-            'docx': '📝',
-            'csv': '📊',
-            'txt': '📄',
-            'wxr': '📰',
-            'md': '📋'
-        }
-        return icons.get(file_type, '📄')
+        icons = {"docx": "📝", "csv": "📊", "txt": "📄", "wxr": "📰", "md": "📋"}
+        return icons.get(file_type, "📄")

@@ -1,0 +1,18 @@
+{
+  "default": true,
+  "MD022": false,
+  "MD032": false,
+  "MD031": false,
+  "MD040": false,
+  "MD026": false,
+  "MD009": false,
+  "MD013": false,
+  "MD036": false,
+  "**/.vscode/**": false,
+  "**/.vscode/*.md": false,
+  "VS_CODE_SETUP.md": false,
+  "replit.md": false,
+  "QUICK_START.md": false,
+  "docs/CODE_QUALITY.md": false,
+  "docs/workflows/**": false
+}

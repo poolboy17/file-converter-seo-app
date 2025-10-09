@@ -1,0 +1,62 @@
+{
+  "include": [
+    "converters",
+    "utils",
+    "app.py"
+  ],
+  "exclude": [
+    "**/__pycache__",
+    "**/.venv",
+    "**/.mypy_cache",
+    "**/.pytest_cache",
+    "**/build",
+    "**/dist",
+    "push_to_github.py"
+  ],
+  "ignore": [],
+  "defineConstant": {},
+  "stubPath": "typings",
+  "venvPath": ".",
+  "venv": ".venv",
+  "pythonVersion": "3.12",
+  "pythonPlatform": "Windows",
+  "typeCheckingMode": "basic",
+  "useLibraryCodeForTypes": true,
+  "reportMissingImports": "warning",
+  "reportMissingTypeStubs": false,
+  "reportUnusedImport": "information",
+  "reportUnusedVariable": "information",
+  "reportUnusedFunction": "information",
+  "reportGeneralTypeIssues": "warning",
+  "reportOptionalMemberAccess": "information",
+  "reportOptionalSubscript": "information",
+  "reportPrivateImportUsage": "information",
+  "reportDuplicateImport": "warning",
+  "reportIncompatibleMethodOverride": "warning",
+  "reportIncompatibleVariableOverride": "warning",
+  "reportInconsistentConstructor": "warning",
+  "reportConstantRedefinition": "error",
+  "reportDeprecated": "warning",
+  "reportUndefinedVariable": "error",
+  "reportUnboundVariable": "error",
+  "reportInvalidStringEscapeSequence": "warning",
+  "reportUnknownParameterType": "none",
+  "reportUnknownArgumentType": "none",
+  "reportUnknownLambdaType": "none",
+  "reportUnknownVariableType": "none",
+  "reportUnknownMemberType": "none",
+  "reportMissingParameterType": "none",
+  "reportMissingTypeArgument": "none",
+  "reportCallInDefaultInitializer": "none",
+  "executionEnvironments": [
+    {
+      "root": ".",
+      "pythonVersion": "3.12",
+      "pythonPlatform": "Windows",
+      "extraPaths": [
+        "converters",
+        "utils"
+      ]
+    }
+  ]
+}

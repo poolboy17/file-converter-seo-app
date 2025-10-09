@@ -1,52 +1,88 @@
-from typing import Dict, Any
 from datetime import datetime
+from typing import Any, Dict
+
 
 class TemplateManager:
     """Manage HTML templates and styling options."""
-    
+
     def __init__(self):
         self.templates = {
-            'modern': self._modern_template,
-            'minimal': self._minimal_template,
-            'classic': self._classic_template,
-            'dark': self._dark_template
+            "modern": self._modern_template,
+            "minimal": self._minimal_template,
+            "classic": self._classic_template,
+            "dark": self._dark_template,
         }
-        
+
         self.color_schemes = {
-            'blue': {'primary': '#667eea', 'secondary': '#764ba2', 'text': '#333', 'bg': '#f5f5f5'},
-            'green': {'primary': '#11998e', 'secondary': '#38ef7d', 'text': '#333', 'bg': '#f0f9ff'},
-            'purple': {'primary': '#8e2de2', 'secondary': '#4a00e0', 'text': '#333', 'bg': '#f5f3ff'},
-            'orange': {'primary': '#f46b45', 'secondary': '#eea849', 'text': '#333', 'bg': '#fff7ed'},
-            'dark': {'primary': '#2d3748', 'secondary': '#4a5568', 'text': '#e2e8f0', 'bg': '#1a202c'}
+            "blue": {
+                "primary": "#667eea",
+                "secondary": "#764ba2",
+                "text": "#333",
+                "bg": "#f5f5f5",
+            },
+            "green": {
+                "primary": "#11998e",
+                "secondary": "#38ef7d",
+                "text": "#333",
+                "bg": "#f0f9ff",
+            },
+            "purple": {
+                "primary": "#8e2de2",
+                "secondary": "#4a00e0",
+                "text": "#333",
+                "bg": "#f5f3ff",
+            },
+            "orange": {
+                "primary": "#f46b45",
+                "secondary": "#eea849",
+                "text": "#333",
+                "bg": "#fff7ed",
+            },
+            "dark": {
+                "primary": "#2d3748",
+                "secondary": "#4a5568",
+                "text": "#e2e8f0",
+                "bg": "#1a202c",
+            },
         }
-    
-    def generate_html(self, content: str, title: str, template: str = 'modern', 
-                     color_scheme: str = 'blue', font_family: str = None) -> str:
+
+    def generate_html(
+        self,
+        content: str,
+        title: str,
+        template: str = "modern",
+        color_scheme: str = "blue",
+        font_family: str = None,
+    ) -> str:
         """
         Generate HTML with selected template and styling.
-        
+
         Args:
             content: Markdown-converted HTML content
             title: Page title
             template: Template name
             color_scheme: Color scheme name
             font_family: Optional custom font family
-            
+
         Returns:
             str: Complete HTML document
         """
-        colors = self.color_schemes.get(color_scheme, self.color_schemes['blue'])
-        
+        colors = self.color_schemes.get(color_scheme, self.color_schemes["blue"])
+
         if template in self.templates:
             return self.templates[template](content, title, colors, font_family)
         else:
-            return self.templates['modern'](content, title, colors, font_family)
-    
-    def _modern_template(self, content: str, title: str, colors: Dict[str, str], font: str = None) -> str:
+            return self.templates["modern"](content, title, colors, font_family)
+
+    def _modern_template(
+        self, content: str, title: str, colors: Dict[str, str], font: str = None
+    ) -> str:
         """Modern gradient template."""
-        font_family = font or '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-        
-        return f'''<!DOCTYPE html>
+        font_family = (
+            font or '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        )
+
+        return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -227,13 +263,15 @@ class TemplateManager:
     
     <script>hljs.highlightAll();</script>
 </body>
-</html>'''
-    
-    def _minimal_template(self, content: str, title: str, colors: Dict[str, str], font: str = None) -> str:
+</html>"""
+
+    def _minimal_template(
+        self, content: str, title: str, colors: Dict[str, str], font: str = None
+    ) -> str:
         """Clean minimal template."""
-        font_family = font or 'Georgia, serif'
-        
-        return f'''<!DOCTYPE html>
+        font_family = font or "Georgia, serif"
+
+        return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -351,13 +389,15 @@ class TemplateManager:
         </footer>
     </article>
 </body>
-</html>'''
-    
-    def _classic_template(self, content: str, title: str, colors: Dict[str, str], font: str = None) -> str:
+</html>"""
+
+    def _classic_template(
+        self, content: str, title: str, colors: Dict[str, str], font: str = None
+    ) -> str:
         """Classic document template."""
         font_family = font or '"Times New Roman", Times, serif'
-        
-        return f'''<!DOCTYPE html>
+
+        return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -472,13 +512,17 @@ class TemplateManager:
         {content}
     </div>
 </body>
-</html>'''
-    
-    def _dark_template(self, content: str, title: str, colors: Dict[str, str], font: str = None) -> str:
+</html>"""
+
+    def _dark_template(
+        self, content: str, title: str, colors: Dict[str, str], font: str = None
+    ) -> str:
         """Dark theme template."""
-        font_family = font or '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-        
-        return f'''<!DOCTYPE html>
+        font_family = (
+            font or '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        )
+
+        return f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -658,12 +702,12 @@ class TemplateManager:
     
     <script>hljs.highlightAll();</script>
 </body>
-</html>'''
-    
+</html>"""
+
     def get_available_templates(self):
         """Get list of available template names."""
         return list(self.templates.keys())
-    
+
     def get_available_color_schemes(self):
         """Get list of available color schemes."""
         return list(self.color_schemes.keys())
