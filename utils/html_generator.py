@@ -101,7 +101,8 @@ class HtmlGenerator:
             return html_document
 
         except Exception as e:
-            1
+            raise RuntimeError(f"Error generating HTML: {str(e)}") from e
+
     def validate_seo(self, html_content: str, title: str | None = None):
         """
         Validate HTML for SEO best practices.

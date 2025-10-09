@@ -1,6 +1,5 @@
 import json
 from datetime import datetime
-from typing import Dict, List, Optional
 
 from bs4 import BeautifulSoup
 
@@ -15,10 +14,10 @@ class SEOEnhancer:
         self,
         html_content: str,
         title: str,
-        description: str = None,
-        keywords: List[str] = None,
-        author: str = None,
-        canonical_url: str = None,
+        description: str | None = None,
+        keywords: list[str] | None = None,
+        author: str | None = None,
+        canonical_url: str | None = None,
     ) -> str:
         """
         Enhance HTML content with SEO optimizations.

@@ -1,5 +1,4 @@
 import re
-from typing import List
 
 
 class TxtConverter:
@@ -62,7 +61,7 @@ class TxtConverter:
         metadata = [
             "---",
             f'title: "{filename}"',
-            f'source_format: "TXT"',
+            'source_format: "TXT"',
             f"lines: {line_count}",
             f"words: {word_count}",
             f"characters: {char_count}",

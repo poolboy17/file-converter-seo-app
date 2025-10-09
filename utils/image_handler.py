@@ -1,10 +1,7 @@
-import base64
 import hashlib
 import io
-import os
 import urllib.error
 import urllib.request
-from typing import Dict, List, Optional, Tuple
 
 from PIL import Image
 
@@ -17,7 +14,7 @@ class ImageHandler:
         self.image_data = {}  # Map: image_hash -> binary_data
         self.image_counter = 0
 
-    def extract_docx_images(self, doc) -> Dict[str, bytes]:
+    def extract_docx_images(self, doc) -> dict[str, bytes]:
         """
         Extract embedded images from DOCX file.
 
@@ -53,7 +50,7 @@ class ImageHandler:
 
     def download_image(
         self, url: str, timeout: int = 10
-    ) -> Optional[Tuple[bytes, str]]:
+    ) -> tuple[bytes, str] | None:
         """
         Download an image from a URL.
 
@@ -114,7 +111,7 @@ class ImageHandler:
 
     def optimize_image(
         self, image_data: bytes, max_width: int = 1200, quality: int = 85
-    ) -> Tuple[bytes, str]:
+    ) -> tuple[bytes, str]:
         """
         Optimize an image by resizing and compressing.
 
@@ -185,7 +182,7 @@ class ImageHandler:
 
         return "jpg"  # Default
 
-    def get_all_images(self) -> Dict[str, str]:
+    def get_all_images(self) -> dict[str, str]:
         """Get all image mappings."""
         return self.images.copy()
 

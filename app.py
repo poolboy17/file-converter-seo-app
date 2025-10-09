@@ -10,6 +10,7 @@ from utils.file_utils import create_download_zip, get_file_extension
 from utils.frontmatter_generator import FrontmatterGenerator
 from utils.image_handler import ImageHandler
 
+
 # Constants
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB limit
 SUPPORTED_EXTENSIONS = ["docx", "csv", "txt", "wxr"]
@@ -85,9 +86,7 @@ def main():
     )
 
     st.title("📄 File to Markdown Converter")
-    st.markdown(
-        "Convert DOCX, CSV, TXT, and WXR files to clean Markdown"
-    )
+    st.markdown("Convert DOCX, CSV, TXT, and WXR files to clean Markdown")
 
     # Help section
     with st.expander("ℹ️ How to Use This Tool", expanded=False):
@@ -211,9 +210,7 @@ def main():
         converted_files = []
 
         # Create tabs for different views
-        tab1, tab2, tab3 = st.tabs(
-            ["📋 File List", "👀 Preview", "📥 Download"]
-        )
+        tab1, tab2, tab3 = st.tabs(["📋 File List", "👀 Preview", "📥 Download"])
 
         with tab1:
             st.subheader("Files to Convert")
@@ -440,7 +437,6 @@ def main():
                             mime="application/zip",
                         )
 
-
     else:
         st.info("👆 Please upload one or more files to get started")
 
@@ -450,22 +446,34 @@ def main():
 
         with col1:
             st.markdown(
-                "**DOCX**\n- Word documents\n- Preserves formatting\n- Extracts text and structure"
+                "**DOCX**\n"
+                "- Word documents\n"
+                "- Preserves formatting\n"
+                "- Extracts text and structure"
             )
 
         with col2:
             st.markdown(
-                "**CSV**\n- Comma-separated values\n- Converts to tables\n- Maintains data structure"
+                "**CSV**\n"
+                "- Comma-separated values\n"
+                "- Converts to tables\n"
+                "- Maintains data structure"
             )
 
         with col3:
             st.markdown(
-                "**TXT**\n- Plain text files\n- Preserves line breaks\n- Basic formatting"
+                "**TXT**\n"
+                "- Plain text files\n"
+                "- Preserves line breaks\n"
+                "- Basic formatting"
             )
 
         with col4:
             st.markdown(
-                "**WXR**\n- WordPress export\n- Extracts posts/pages\n- Preserves metadata"
+                "**WXR**\n"
+                "- WordPress export\n"
+                "- Extracts posts/pages\n"
+                "- Preserves metadata"
             )
 
 

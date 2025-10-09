@@ -1,10 +1,7 @@
 import io
-import re
 
 from docx import Document
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
-from docx.oxml import parse_xml
-from docx.shared import Inches
 
 
 class DocxConverter:
@@ -76,7 +73,7 @@ class DocxConverter:
         metadata = [
             "---",
             f'title: "{filename}"',
-            f'source_format: "DOCX"',
+            'source_format: "DOCX"',
         ]
 
         try:
@@ -89,7 +86,7 @@ class DocxConverter:
                 metadata.append(f'modified: "{props.modified.isoformat()}"')
             if props.subject:
                 metadata.append(f'subject: "{props.subject}"')
-        except:
+        except Exception:
             pass  # Skip metadata if not available
 
         metadata.append("---")
@@ -182,13 +179,14 @@ class DocxConverter:
 
     def _extract_all_images(self, doc):
         """Extract all images from the document."""
-        try:
-            from utils.image_handler import ImageHandler
+        if not self.image_handler:
+            return  # No image handler, skip extraction
 
+        try:
             for rel in doc.part.rels.values():
                 if "image" in rel.target_ref:
                     image_part = rel.target_part
-                    rId = rel.rId
+                    r_id = rel.rId
                     image_data = image_part.blob
 
                     # Optimize and save the image
@@ -198,7 +196,7 @@ class DocxConverter:
                     )
 
                     # Store mapping
-                    self.extracted_images[rId] = filename
+                    self.extracted_images[r_id] = filename
 
         except Exception as e:
             print(f"Warning: Could not extract images: {str(e)}")
@@ -213,18 +211,16 @@ class DocxConverter:
                 # Check for inline images
                 if "graphic" in run._element.xml:
                     # Parse the XML to find image references
-                    for drawing in run._element.findall(
-                        ".//{http://schemas.openxmlformats.org/wordprocessingml/2006/main}drawing"
-                    ):
-                        for blip in drawing.findall(
-                            ".//{http://schemas.openxmlformats.org/drawingml/2006/main}blip"
-                        ):
-                            embed = blip.get(
-                                "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}embed"
-                            )
+                    # XML namespace URLs - cannot be shortened
+                    ns_main = "{http://schemas.openxmlformats.org/wordprocessingml/2006/main}"  # noqa: E501
+                    ns_draw = "{http://schemas.openxmlformats.org/drawingml/2006/main}"  # noqa: E501
+                    ns_rel = "{http://schemas.openxmlformats.org/officeDocument/2006/relationships}"  # noqa: E501
+                    for drawing in run._element.findall(f".//{ns_main}drawing"):
+                        for blip in drawing.findall(f".//{ns_draw}blip"):
+                            embed = blip.get(f"{ns_rel}embed")
                             if embed:
                                 image_refs.append(embed)
-        except Exception as e:
+        except Exception:
             pass  # Silently skip if image extraction fails
 
         return image_refs

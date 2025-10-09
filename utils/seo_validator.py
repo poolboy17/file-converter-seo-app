@@ -87,12 +87,12 @@ class SEOValidator:
 
             if desc_length < 50:
                 self.warnings.append(
-                    f"Meta description too short ({desc_length} chars, recommend 120-160)"
+                    f"Meta description too short ({desc_length} chars, recommend 120-160)"  # noqa: E501
                 )
                 self.score -= 5
             elif desc_length > 160:
                 self.warnings.append(
-                    f"Meta description too long ({desc_length} chars, recommend 120-160)"
+                    f"Meta description too long ({desc_length} chars, recommend 120-160)"  # noqa: E501
                 )
                 self.score -= 3
             else:

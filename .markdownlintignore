@@ -1,0 +1,21 @@
+# Markdownlint ignore file
+# Files listed here will not be checked by markdown linters
+
+# Generated sanity test report (dev only)
+SANITY_TEST_REPORT.md
+
+# Migration documentation (dev only)
+.vscode/ISORT_REMOVAL.md
+
+# Lock files and dependencies
+uv.lock
+*.lock
+
+# Build and distribution
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/

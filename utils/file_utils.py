@@ -2,7 +2,6 @@ import io
 import os
 import zipfile
 from datetime import datetime
-from typing import Dict, List
 
 
 def get_file_extension(filename):
@@ -11,7 +10,7 @@ def get_file_extension(filename):
 
 
 def create_download_zip(
-    converted_files: List[Dict], output_format: str, image_handler=None
+    converted_files: list[dict], output_format: str, image_handler=None
 ):
     """
     Create a ZIP file containing all converted files.
@@ -62,17 +61,17 @@ def create_download_zip(
     return zip_buffer
 
 
-def create_file_metadata(file_data: Dict) -> str:
+def create_file_metadata(file_data: dict) -> str:
     """Create a metadata summary for a converted file."""
     metadata_lines = [
-        f"File Conversion Metadata",
-        f"========================",
-        f"",
+        "File Conversion Metadata",
+        "========================",
+        "",
         f"Original filename: {file_data['original_name']}",
         f"File type: {file_data['file_type'].upper()}",
         f"Conversion date: {datetime.now().isoformat()}",
-        f"",
-        f"Content statistics:",
+        "",
+        "Content statistics:",
         f"- Markdown length: {len(file_data['markdown_content'])} characters",
         f"- Markdown lines: {len(file_data['markdown_content'].splitlines())}",
     ]

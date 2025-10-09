@@ -2,7 +2,7 @@ import io
 import os
 import zipfile
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Optional
 
 
 class StaticSiteGenerator:
@@ -12,7 +12,7 @@ class StaticSiteGenerator:
         self,
         template: str = "modern",
         color_scheme: str = "blue",
-        font_family: str = None,
+        font_family: Optional[str] = None,
     ):
         self.site_name = "Converted Site"
         self.template = template
@@ -21,8 +21,8 @@ class StaticSiteGenerator:
 
     def generate_site(
         self,
-        converted_files: List[Dict[str, Any]],
-        site_name: str = None,
+        converted_files: list[dict[str, Any]],
+        site_name: Optional[str] = None,
         image_handler=None,
     ) -> io.BytesIO:
         """
@@ -82,7 +82,7 @@ class StaticSiteGenerator:
         zip_buffer.seek(0)
         return zip_buffer
 
-    def _generate_index_page(self, converted_files: List[Dict[str, Any]]) -> str:
+    def _generate_index_page(self, converted_files: list[dict[str, Any]]) -> str:
         """Generate the index/home page with links to all documents."""
         file_list_html = []
 
@@ -117,13 +117,13 @@ class StaticSiteGenerator:
             <p class="subtitle">Converted Documents</p>
         </div>
     </header>
-    
+
     <main class="container">
         <section class="intro">
             <h2>Welcome</h2>
             <p>This site contains {len(converted_files)} converted document(s). Click on any document below to view it.</p>
         </section>
-        
+
         <section class="file-list">
             <h2>Documents</h2>
             <div class="file-grid">
@@ -131,14 +131,14 @@ class StaticSiteGenerator:
             </div>
         </section>
     </main>
-    
+
     <footer class="site-footer">
         <div class="container">
             <p>Generated on {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}</p>
             <p>Created with File to Markdown Converter</p>
         </div>
     </footer>
-    
+
     <script src="assets/script.js"></script>
 </body>
 </html>"""
@@ -146,7 +146,7 @@ class StaticSiteGenerator:
         return html
 
     def _generate_page_with_nav(
-        self, current_file: Dict[str, Any], all_files: List[Dict[str, Any]]
+        self, current_file: dict[str, Any], all_files: list[dict[str, Any]]
     ) -> str:
         """Generate a page with navigation to other documents."""
         # The HTML content is already styled with the user's template
@@ -509,16 +509,16 @@ article blockquote {
     .page-layout {
         flex-direction: column;
     }
-    
+
     .sidebar {
         width: 100%;
         position: static;
     }
-    
+
     .file-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .site-header h1 {
         font-size: 2rem;
     }
@@ -529,7 +529,7 @@ article blockquote {
     .site-header, .page-header, .sidebar, .site-footer, .home-link {
         display: none;
     }
-    
+
     .page-content {
         box-shadow: none;
         padding: 0;
@@ -568,11 +568,11 @@ document.querySelectorAll('pre code').forEach(block => {
         cursor: pointer;
         border-radius: 3px;
     `;
-    
+
     const pre = block.parentElement;
     pre.style.position = 'relative';
     pre.appendChild(button);
-    
+
     button.addEventListener('click', () => {
         navigator.clipboard.writeText(block.textContent).then(() => {
             button.textContent = 'Copied!';
@@ -588,7 +588,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Static site loaded successfully');
 });"""
 
-    def _generate_readme(self, converted_files: List[Dict[str, Any]]) -> str:
+    def _generate_readme(self, converted_files: list[dict[str, Any]]) -> str:
         """Generate README for the static site."""
         file_list = "\n".join([f"- {f['original_name']}" for f in converted_files])
 
@@ -651,7 +651,7 @@ Created with File to Markdown Converter
         name = re.sub(r"[-\s]+", "-", name)
         return name.strip("-")
 
-    def _get_file_icon(self, file_type: str) -> str:
+    def _get_file_icon(self, file_type: Optional[str]) -> str:
         """Get emoji icon for file type."""
         icons = {"docx": "📝", "csv": "📊", "txt": "📄", "wxr": "📰", "md": "📋"}
-        return icons.get(file_type, "📄")
+        return icons.get(file_type, "📄") if file_type else "📄"

@@ -16,7 +16,7 @@ class FrontmatterGenerator:
         }
 
     def generate(
-        self, ssg_type: str, metadata: dict[str, Any], filename: str = None
+        self, ssg_type: str, metadata: dict[str, Any], filename: str | None = None
     ) -> str:
         """
         Generate frontmatter for specified SSG.
@@ -108,7 +108,7 @@ class FrontmatterGenerator:
                 "permalink",
                 "excerpt",
             ]:
-                if isinstance(value, (list, dict)):
+                if isinstance(value, list | dict):
                     continue  # Skip complex types for now
                 lines.append(f'{key}: "{self._escape_yaml(str(value))}"')
 
@@ -164,9 +164,8 @@ class FrontmatterGenerator:
                 for cat in metadata["categories"]:
                     lines.append(f'  - "{self._escape_yaml(str(cat))}"')
             else:
-                lines.append(
-                    f"categories: [\"{self._escape_yaml(str(metadata['categories']))}\"]"
-                )
+                cat_str = self._escape_yaml(str(metadata["categories"]))
+                lines.append(f'categories: ["{cat_str}"]')
 
         # Slug
         if "title" in metadata:
@@ -235,9 +234,8 @@ class FrontmatterGenerator:
                 )
                 lines.append(f"categories: [{cats_str}]")
             else:
-                lines.append(
-                    f"categories: [\"{self._escape_yaml(str(metadata['categories']))}\"]"
-                )
+                cat_str = self._escape_yaml(str(metadata["categories"]))
+                lines.append(f'categories: ["{cat_str}"]')
 
         # Draft status
         if "status" in metadata:

@@ -14,6 +14,14 @@ dependencies = [
     "streamlit>=1.50.0",
 ]
 
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.4.0",
+    "pytest-cov>=4.1.0",
+    "pytest-mock>=3.11.0",
+    "pillow>=10.0.0",
+]
+
 [tool.black]
 line-length = 88
 target-version = ['py312']
@@ -31,13 +39,6 @@ extend-exclude = '''
   | dist
 )/
 '''
-
-[tool.isort]
-profile = "black"
-line_length = 88
-skip_gitignore = true
-known_first_party = ["converters", "utils"]
-sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "LOCALFOLDER"]
 
 [tool.pyright]
 # Pylance uses Pyright under the hood
@@ -138,6 +139,13 @@ unfixable = []
 "__init__.py" = ["F401"]  # Allow unused imports in __init__.py
 "app.py" = ["F401"]       # Allow unused imports in main app (Streamlit dynamic loading)
 "utils/html_generator.py" = ["E501"]  # HTML/CSS/JS template strings have long lines
+"utils/seo_validator.py" = ["E501"]   # SEO validation messages have long f-strings (dev only)
+
+[tool.ruff.lint.isort]
+# Import sorting configuration (replaces standalone isort)
+known-first-party = ["converters", "utils"]
+section-order = ["future", "standard-library", "third-party", "first-party", "local-folder"]
+lines-after-imports = 2
 
 [tool.ruff.format]
 # Use Black-compatible formatting

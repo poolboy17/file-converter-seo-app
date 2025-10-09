@@ -1,7 +1,6 @@
 import re
 import xml.etree.ElementTree as ET
 from datetime import datetime
-from typing import Dict, List
 
 from bs4 import BeautifulSoup
 
@@ -82,7 +81,7 @@ class WxrConverter:
                 if post_data and post_data.get("content"):
                     posts.append(post_data)
 
-        except ET.ParseError as e:
+        except ET.ParseError:
             # If XML parsing fails, try to extract content using regex
             posts = self._parse_wxr_with_regex(content)
 
@@ -192,7 +191,7 @@ class WxrConverter:
         metadata = [
             "---",
             f'title: "WordPress Export - {filename}"',
-            f'source_format: "WXR"',
+            'source_format: "WXR"',
             f'export_date: "{datetime.now().isoformat()}"',
         ]
 

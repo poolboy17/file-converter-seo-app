@@ -5,6 +5,7 @@ per-file-ignores =
     __init__.py:F401
     app.py:F401
     utils/html_generator.py:E501
+    utils/seo_validator.py:E501
 exclude =
     .git,
     __pycache__,

@@ -1,0 +1,21 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(pytest:*)",
+      "Bash(python -m pytest --collect-only)",
+      "Bash(python -m pytest --collect-only -q)",
+      "Bash(.venvScriptspython.exe -m pip install pytest pytest-cov pytest-mock python-docx pillow)",
+      "Bash(python:*)",
+      "Bash(chmod:*)",
+      "Bash(cat:*)",
+      "Bash(streamlit run:*)",
+      "Bash(timeout:*)",
+      "Bash(.venv/Scripts/python.exe -m streamlit run:*)",
+      "Bash(curl:*)",
+      "Bash(.venv/Scripts/python.exe:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

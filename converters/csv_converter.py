@@ -1,5 +1,4 @@
 import io
-from typing import List
 
 import pandas as pd
 
@@ -66,7 +65,7 @@ class CsvConverter:
         metadata = [
             "---",
             f'title: "{filename}"',
-            f'source_format: "CSV"',
+            'source_format: "CSV"',
             f"rows: {len(df)}",
             f"columns: {len(df.columns)}",
         ]

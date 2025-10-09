@@ -9,9 +9,13 @@ streamlit>=1.50.0
 
 # Development tools
 black>=25.9.0
-isort>=6.1.0
+ruff>=0.14.0
 pyright>=1.1.383
 mypy>=1.13.0
+
+# Type stubs
+types-Markdown>=3.9.0
+types-PyYAML>=6.0.12
 
 # Testing tools
 pytest>=8.3.0
