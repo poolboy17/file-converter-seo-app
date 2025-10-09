@@ -42,3 +42,15 @@ push_to_github.py
 
 # Git
 .git/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.json
+.ruff_cache/
+
+# Heroku
+.heroku/
+*.pyc
+__pycache__/

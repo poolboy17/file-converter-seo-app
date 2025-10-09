@@ -1,0 +1,22 @@
+# Files to exclude from Heroku slug (reduces deployment size)
+tests/
+*.pyc
+__pycache__/
+.git/
+.gitignore
+.vscode/
+.flake8
+.pylintrc
+pytest.ini
+.pre-commit-config.yaml
+*.md
+!README.md
+docs/
+scripts/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+coverage.json
+.coverage
+*.log

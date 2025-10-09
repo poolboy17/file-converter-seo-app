@@ -1,0 +1,10 @@
+# Production dependencies only (no dev tools)
+beautifulsoup4>=4.14.2
+lxml>=6.0.2
+markdown>=3.9
+pandas>=2.3.3
+python-docx>=1.2.0
+pyyaml>=6.0.3
+requests>=2.32.5
+streamlit>=1.50.0
+Pillow>=10.0.0

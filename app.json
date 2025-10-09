@@ -1,0 +1,29 @@
+{
+  "name": "File Converter SEO App",
+  "description": "A Streamlit app for converting various file formats (CSV, DOCX, TXT, WXR) to SEO-optimized Markdown with frontmatter",
+  "repository": "https://github.com/poolboy17/file-converter-seo-app",
+  "logo": "https://streamlit.io/images/brand/streamlit-mark-color.png",
+  "keywords": ["streamlit", "python", "file-converter", "seo", "markdown"],
+  "stack": "heroku-22",
+  "buildpacks": [
+    {
+      "url": "heroku/python"
+    }
+  ],
+  "env": {
+    "STREAMLIT_SERVER_HEADLESS": {
+      "description": "Run Streamlit in headless mode",
+      "value": "true"
+    },
+    "STREAMLIT_BROWSER_GATHER_USAGE_STATS": {
+      "description": "Disable usage stats collection",
+      "value": "false"
+    }
+  },
+  "formation": {
+    "web": {
+      "quantity": 1,
+      "size": "basic"
+    }
+  }
+}

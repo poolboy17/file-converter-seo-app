@@ -88,8 +88,14 @@ def main():
     st.title("📄 File to Markdown Converter")
     st.markdown("Convert DOCX, CSV, TXT, and WXR files to clean Markdown")
 
-    # Help section
-    with st.expander("ℹ️ How to Use This Tool", expanded=False):
+    # Help section - expanded by default on first visit
+    if "help_shown" not in st.session_state:
+        st.session_state.help_shown = True
+        help_expanded = True
+    else:
+        help_expanded = False
+
+    with st.expander("ℹ️ How to Use This Tool", expanded=help_expanded):
         st.markdown(
             """
         ### Quick Start Guide
@@ -185,9 +191,11 @@ def main():
         type=["docx", "csv", "txt", "wxr"],
         accept_multiple_files=True,
         help="Supported formats: DOCX, CSV, TXT, WXR",
+        label_visibility="visible",
     )
 
-    if uploaded_files:
+    # Always show the interface, even without files
+    if uploaded_files and len(uploaded_files) > 0:
         # Validate files
         validation_errors, validation_warnings = validate_files(uploaded_files)
 
@@ -438,10 +446,29 @@ def main():
                         )
 
     else:
-        st.info("👆 Please upload one or more files to get started")
+        # Show workflow guide prominently
+        st.success("✨ **Ready to Convert!** Upload files above to begin")
+
+        # Workflow steps
+        st.markdown("### 📋 Conversion Workflow")
+        st.markdown("""
+        <div style="background-color: #f0f2f6; padding: 20px;
+        border-radius: 10px; margin: 10px 0;">
+        <h4>Follow these steps:</h4>
+        <ol style="font-size: 16px; line-height: 1.8;">
+            <li>📤 <b>Upload files</b> using the file uploader above</li>
+            <li>⚙️ <b>Configure options</b> in the sidebar (optional)</li>
+            <li>🔄 <b>Click "Convert All Files"</b> button (appears after upload)</li>
+            <li>👀 <b>Preview results</b> in the Preview tab</li>
+            <li>📥 <b>Download</b> individual files or ZIP archive</li>
+        </ol>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.markdown("---")
 
         # Show supported formats
-        st.markdown("### Supported File Formats")
+        st.markdown("### 📂 Supported File Formats")
         col1, col2, col3, col4 = st.columns(4)
 
         with col1:
