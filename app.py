@@ -503,6 +503,11 @@ def main():
                                     f"ZIP created successfully: "
                                     f"{len(converted_files)} files"
                                 )
+
+                                # Store in session state for download button
+                                st.session_state.zip_buffer = zip_buffer
+                                st.session_state.ssg_choice = ssg_choice
+
                                 st.success(
                                     f"✅ ZIP ready! {len(converted_files)} "
                                     f"articles in separate folders"
@@ -515,27 +520,32 @@ def main():
                                     st.code(str(e))
                                 st.stop()
 
+                    # Show download button if ZIP has been created
+                    if "zip_buffer" in st.session_state:
                         st.download_button(
                             label="📥 Download ZIP Archive",
-                            data=zip_buffer.getvalue(),
+                            data=st.session_state.zip_buffer.getvalue(),
                             file_name="converted_files.zip",
                             mime="application/zip",
                         )
 
                         # Show folder structure info
-                        if ssg_choice == "Hugo":
+                        ssg_choice_display = st.session_state.get(
+                            "ssg_choice", ssg_choice
+                        )
+                        if ssg_choice_display == "Hugo":
                             st.caption(
                                 "📁 `content/posts/<article-name>/index.md` - "
                                 "Each article in its own folder\n"
                                 "📁 `assets/images/` - Image assets"
                             )
-                        elif ssg_choice == "Jekyll":
+                        elif ssg_choice_display == "Jekyll":
                             st.caption(
                                 "📁 `_posts/<article-name>/index.md` - "
                                 "Each article in its own folder\n"
                                 "📁 `assets/images/` - Image assets"
                             )
-                        elif ssg_choice == "Astro":
+                        elif ssg_choice_display == "Astro":
                             st.caption(
                                 "📁 `src/content/blog/<article-name>/index.md` - "
                                 "Each article in its own folder\n"
