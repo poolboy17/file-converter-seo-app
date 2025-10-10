@@ -1,4 +1,18 @@
 [server]
-headless = true
-address = "0.0.0.0"
-port = 5000
+# Local desktop mode - NOT headless
+headless = false
+# Localhost only for security (not 0.0.0.0)
+address = "localhost"
+port = 8501
+
+[client]
+# Hide deployment-related UI elements
+toolbarMode = "minimal"
+
+[browser]
+# Automatically open browser when app starts
+gatherUsageStats = false
+
+[ui]
+# Hide the top-right menu for cleaner interface
+hideTopBar = false

@@ -69,11 +69,11 @@ class TestFileUtils:
 
         assert isinstance(result, io.BytesIO)
 
-        # Verify ZIP contents
+        # Verify ZIP contents - each article in its own folder
         with zipfile.ZipFile(result, "r") as zip_file:
             names = zip_file.namelist()
-            assert any("test1.md" in name for name in names)
-            assert any("test2.md" in name for name in names)
+            assert any("test1/index.md" in name for name in names)
+            assert any("test2/index.md" in name for name in names)
 
     @pytest.mark.unit
     @pytest.mark.utils
@@ -92,9 +92,10 @@ class TestFileUtils:
 
         assert isinstance(result, io.BytesIO)
 
+        # Verify ZIP contents - HTML in article folder
         with zipfile.ZipFile(result, "r") as zip_file:
             names = zip_file.namelist()
-            assert any("test.html" in name for name in names)
+            assert any("test/index.html" in name for name in names)
 
     @pytest.mark.unit
     @pytest.mark.utils
@@ -111,10 +112,11 @@ class TestFileUtils:
 
         result = create_download_zip(converted_files, "Both")
 
+        # Verify both formats in article folder
         with zipfile.ZipFile(result, "r") as zip_file:
             names = zip_file.namelist()
-            assert any("test.md" in name for name in names)
-            assert any("test.html" in name for name in names)
+            assert any("test/index.md" in name for name in names)
+            assert any("test/index.html" in name for name in names)
 
     @pytest.mark.unit
     @pytest.mark.utils

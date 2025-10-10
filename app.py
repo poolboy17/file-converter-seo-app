@@ -9,17 +9,31 @@ from converters.wxr_converter import WxrConverter
 from utils.file_utils import create_download_zip, get_file_extension
 from utils.frontmatter_generator import FrontmatterGenerator
 from utils.image_handler import ImageHandler
+from utils.logger import (
+    setup_logger,
+    log_file_info,
+    log_conversion_start,
+    log_conversion_success,
+    log_conversion_error,
+    log_zip_creation,
+)
 
 
 # Constants
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB limit
 SUPPORTED_EXTENSIONS = ["docx", "csv", "txt", "wxr", "xml"]
 
+# Initialize logger
+logger = setup_logger("file_converter", "DEBUG")
+logger.info("=" * 60)
+logger.info("Application starting")
+logger.info("=" * 60)
 
 # Initialize converters with caching
 @st.cache_resource
 def get_converters():
     """Get cached converter instances for better performance."""
+    logger.info("Initializing converters...")
     return {
         "docx": DocxConverter(),
         "csv": CsvConverter(),
@@ -29,6 +43,7 @@ def get_converters():
 
 
 converters = get_converters()
+logger.info(f"Converters ready: {list(converters.keys())}")
 
 
 def validate_files(uploaded_files):
@@ -280,11 +295,16 @@ def main():
             for i, file in enumerate(uploaded_files):
                 status_text.text(f"Converting {file.name}...")
 
+                # Log file details
+                log_file_info(logger, file, f"File {i+1}/{len(uploaded_files)}")
+
                 try:
                     file_ext = get_file_extension(file.name)
+                    log_conversion_start(logger, file.name, file_ext)
 
                     # Treat XML files as WXR (WordPress exports)
                     if file_ext == "xml":
+                        logger.debug(f"  → Treating {file.name} as WXR (WordPress)")
                         file_ext = "wxr"
 
                     if file_ext in converters:
@@ -330,26 +350,36 @@ def main():
                             }
                         )
 
+                        # Log success
+                        log_conversion_success(
+                            logger, file.name, len(markdown_content)
+                        )
+
                     else:
+                        logger.error(f"Unsupported file type: {file_ext}")
                         st.error(f"❌ Unsupported file type: {file_ext}")
 
-                except PermissionError:
+                except PermissionError as e:
+                    log_conversion_error(logger, file.name, e)
                     st.error(
                         f"❌ **Permission denied**: Cannot read {file.name}. "
                         f"Please check file permissions."
                     )
-                except MemoryError:
+                except MemoryError as e:
+                    log_conversion_error(logger, file.name, e)
                     st.error(
                         f"❌ **Memory error**: {file.name} is too large to process. "
                         f"Try a smaller file."
                     )
-                except UnicodeDecodeError:
+                except UnicodeDecodeError as e:
                     # Handle encoding errors first (subclass of ValueError)
+                    log_conversion_error(logger, file.name, e)
                     st.error(
                         f"❌ **Encoding error** in {file.name}: "
                         f"File contains invalid characters. Try saving with UTF-8."
                     )
                 except ValueError as ve:
+                    log_conversion_error(logger, file.name, ve)
                     st.error(f"❌ **Invalid format** in {file.name}: {str(ve)}")
                     with st.expander("Show Error Details"):
                         st.code(str(ve))
@@ -432,6 +462,13 @@ def main():
                 with col2:
                     st.markdown("**Batch Download:**")
 
+                    # Choose SSG structure
+                    ssg_choice = st.selectbox(
+                        "Folder structure:",
+                        ["Flat (root)", "Hugo", "Jekyll", "Astro"],
+                        help="Each article gets its own folder with index.md",
+                    )
+
                     if st.button("📦 Create ZIP Archive"):
                         with st.spinner("📦 Creating ZIP archive..."):
                             try:
@@ -439,11 +476,40 @@ def main():
                                 image_handler = st.session_state.get(
                                     "image_handler", None
                                 )
-                                zip_buffer = create_download_zip(
-                                    converted_files, "Markdown", image_handler
+                                logger.debug(
+                                    f"Image handler found: {image_handler is not None}"
                                 )
-                                st.success("✅ ZIP archive ready!")
+
+                                # Map choice to structure parameter
+                                ssg_map = {
+                                    "Hugo": "hugo",
+                                    "Jekyll": "jekyll",
+                                    "Astro": "astro",
+                                    "Flat (root)": None,
+                                }
+                                ssg_struct = ssg_map.get(ssg_choice)
+
+                                log_zip_creation(
+                                    logger, len(converted_files), ssg_struct
+                                )
+
+                                zip_buffer = create_download_zip(
+                                    converted_files,
+                                    "Markdown",
+                                    image_handler,
+                                    ssg_structure=ssg_struct,
+                                )
+                                logger.info(
+                                    f"ZIP created successfully: "
+                                    f"{len(converted_files)} files"
+                                )
+                                st.success(
+                                    f"✅ ZIP ready! {len(converted_files)} "
+                                    f"articles in separate folders"
+                                )
                             except Exception as e:
+                                logger.error("ZIP creation failed")
+                                logger.exception(e)
                                 st.error("❌ **Error creating ZIP archive**")
                                 with st.expander("Show Error Details"):
                                     st.code(str(e))
@@ -456,13 +522,40 @@ def main():
                             mime="application/zip",
                         )
 
+                        # Show folder structure info
+                        if ssg_choice == "Hugo":
+                            st.caption(
+                                "📁 `content/posts/<article-name>/index.md` - "
+                                "Each article in its own folder\n"
+                                "📁 `assets/images/` - Image assets"
+                            )
+                        elif ssg_choice == "Jekyll":
+                            st.caption(
+                                "📁 `_posts/<article-name>/index.md` - "
+                                "Each article in its own folder\n"
+                                "📁 `assets/images/` - Image assets"
+                            )
+                        elif ssg_choice == "Astro":
+                            st.caption(
+                                "📁 `src/content/blog/<article-name>/index.md` - "
+                                "Each article in its own folder\n"
+                                "📁 `assets/images/` - Image assets"
+                            )
+                        else:
+                            st.caption(
+                                "📁 `<article-name>/index.md` - "
+                                "Each article in its own folder\n"
+                                "📁 `assets/` - Image assets"
+                            )
+
     else:
         # Show workflow guide prominently
         st.success("✨ **Ready to Convert!** Upload files above to begin")
 
         # Workflow steps
         st.markdown("### 📋 Conversion Workflow")
-        st.markdown("""
+        st.markdown(
+            """
         <div style="background-color: #f0f2f6; padding: 20px;
         border-radius: 10px; margin: 10px 0;">
         <h4>Follow these steps:</h4>
@@ -474,7 +567,9 @@ def main():
             <li>📥 <b>Download</b> individual files or ZIP archive</li>
         </ol>
         </div>
-        """, unsafe_allow_html=True)
+        """,
+            unsafe_allow_html=True,
+        )
 
         st.markdown("---")
 

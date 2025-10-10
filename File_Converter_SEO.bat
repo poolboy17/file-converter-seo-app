@@ -3,7 +3,7 @@ REM ==================================================================
 REM  File Converter SEO App - Desktop Launcher
 REM ==================================================================
 REM  This script launches the File Converter SEO App
-REM  
+REM
 REM  Usage: Double-click this file from anywhere
 REM ==================================================================
 
@@ -52,7 +52,25 @@ echo  Or close this window to exit
 echo ===============================================
 echo.
 
-streamlit run app.py
+REM Start Streamlit in background and open browser
+start /B streamlit run app.py --server.headless=false
+
+REM Wait 3 seconds for server to start
+timeout /t 3 /nobreak >nul
+
+REM Open browser
+start http://localhost:8501
+
+REM Keep the window open and wait for Streamlit
+echo.
+echo Browser opened. Keep this window open while using the app.
+echo Press Ctrl+C to stop the app.
+echo.
+
+REM Wait indefinitely (Streamlit is running in background)
+:WAIT
+timeout /t 60 /nobreak >nul
+goto WAIT
 
 REM If app exits, pause so user can see any error messages
 if errorlevel 1 (
