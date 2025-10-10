@@ -43,7 +43,7 @@ REM Start the app
 echo.
 echo ===============================================
 echo  App is starting...
-echo  Your browser will open automatically.
+echo  Your browser will open automatically in 5 seconds.
 echo.
 echo  Local URL: http://localhost:8501
 echo.
@@ -52,25 +52,11 @@ echo  Or close this window to exit
 echo ===============================================
 echo.
 
-REM Start Streamlit in background and open browser
-start /B streamlit run app.py --server.headless=false
+REM Open browser after a 5 second delay in the background
+start "" cmd /c "timeout /t 5 /nobreak >nul && start http://localhost:8501"
 
-REM Wait 3 seconds for server to start
-timeout /t 3 /nobreak >nul
-
-REM Open browser
-start http://localhost:8501
-
-REM Keep the window open and wait for Streamlit
-echo.
-echo Browser opened. Keep this window open while using the app.
-echo Press Ctrl+C to stop the app.
-echo.
-
-REM Wait indefinitely (Streamlit is running in background)
-:WAIT
-timeout /t 60 /nobreak >nul
-goto WAIT
+REM Run Streamlit (this will keep the window open)
+streamlit run app.py --server.headless=false
 
 REM If app exits, pause so user can see any error messages
 if errorlevel 1 (
